@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Referral Calculator</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABWklEQVR4nOXYsUoDQRhF4bOX2Q0Y0ZdYrCWFraC2WmuXB7AU7M0DpBUhIZViK2Jnb5XKMoVlUgoqJBH1Df4QhhDwfu2ZmV22mdkp9nfrXwKpLKLM9zyczkWnS47hcJg1//G+H3ZhTpgT5oQ5YU6YE+ZSWeV9g7KKzwkppaz1W61W2K8uz8O+1azCLswJc8KcMCfMCXPCXNFIKf6h/+eEOWFOmBPmhDlhTphLq37ATa8X9n63E/aX1zdWSZgT5oQ5YU6YE+aEueJobye8D3j/mIYLbG82wj6f/ZDjczoLe7MR3/t/zeZhF+aEOWFOmBPmhDlhLuXu09e3T6zT6fFB1jlBmBPmhDlhTpgT5oS5tGjA3cNz2Ou6Dnu73SbHYDAI+2g0CvvZyWHYhTlhTpgT5oQ5YU6YS4sGjMfjrH1+Mpks/1ZLrL/IRlWGXZgT5oQ5YU6YE+a07hdYtz//vDh98rNvIgAAAABJRU5ErkJggg==">
+<style>
+  :root {
+    color-scheme: dark;
+
+    --bg: #131315;
+    --panel: #1c1e21;
+    --head: #232629;
+    --line: #2c2f34;
+    --input: #141517;
+    --text: #c9ced4;
+    --muted: #8b939d;
+    --accent: #6d3fd4;
+    --accent-hi: color-mix(in srgb, var(--accent) 68%, #fff);
+    --accent-edge: color-mix(in srgb, var(--accent) 76%, #000);
+    --glow: color-mix(in srgb, var(--accent) 18%, transparent);
+    --danger: #d9534f;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 48px 16px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: var(--bg);
+    background-image: radial-gradient(760px 420px at 50% -6%, var(--glow), transparent 68%);
+    color: var(--text);
+    font: 15px/1.5 "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .block {
+    width: 100%;
+    max-width: 520px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow:
+      0 14px 40px rgba(0, 0, 0, .55),
+      0 8px 34px var(--glow);
+  }
+
+  .block-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--head);
+    border-bottom: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    font-size: 15px;
+    font-weight: 600;
+    color: #e2e6ea;
+  }
+
+  .avatar {
+    width: 24px;
+    height: 24px;
+    image-rendering: pixelated;
+    border-radius: 2px;
+  }
+
+  .block-body { padding: 20px 18px; }
+
+  .row { display: flex; align-items: center; gap: 14px; }
+  .row + .row { margin-top: 14px; }
+  .row > label { flex: 0 0 120px; color: var(--muted); font-size: 14px; }
+  .row > input { flex: 1; }
+
+  input {
+    width: 100%;
+    padding: 9px 11px;
+    font: inherit;
+    color: var(--text);
+    background: var(--input);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #17191c;
+  }
+
+  .actions {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  button {
+    width: 100%;
+    padding: 10px 18px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 4px;
+    border: 1px solid var(--accent-edge);
+    background-color: var(--accent);
+    background-image: linear-gradient(180deg,
+      color-mix(in srgb, var(--accent) 90%, #fff) 0%,
+      var(--accent) 55%,
+      color-mix(in srgb, var(--accent) 86%, #000) 100%);
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
+    cursor: pointer;
+  }
+  button:hover {
+    background-image: linear-gradient(180deg,
+      color-mix(in srgb, var(--accent) 80%, #fff) 0%,
+      color-mix(in srgb, var(--accent) 94%, #fff) 55%,
+      var(--accent) 100%);
+  }
+  button:active {
+    background-image: linear-gradient(180deg,
+      color-mix(in srgb, var(--accent) 86%, #000) 0%,
+      var(--accent) 100%);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, .3);
+  }
+
+  .out {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: var(--input);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    font-size: 15px;
+  }
+  .out.err { border-left-color: var(--danger); color: #eab3b1; }
+  .out.idle { border-left-color: #4a5058; color: var(--muted); font-size: 14px; }
+  .out b { color: var(--accent-hi); font-weight: 700; }
+
+  .hidden { display: none; }
+
+  @media (max-width: 540px) {
+    .row { display: block; }
+    .row > label { display: block; margin-bottom: 5px; }
+  }
+</style>
+</head>
+<body>
+<div class="block">
+  <div class="block-head"><img class="avatar" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABWklEQVR4nOXYsUoDQRhF4bOX2Q0Y0ZdYrCWFraC2WmuXB7AU7M0DpBUhIZViK2Jnb5XKMoVlUgoqJBH1Df4QhhDwfu2ZmV22mdkp9nfrXwKpLKLM9zyczkWnS47hcJg1//G+H3ZhTpgT5oQ5YU6YE+ZSWeV9g7KKzwkppaz1W61W2K8uz8O+1azCLswJc8KcMCfMCXPCXNFIKf6h/+eEOWFOmBPmhDlhTphLq37ATa8X9n63E/aX1zdWSZgT5oQ5YU6YE+aEueJobye8D3j/mIYLbG82wj6f/ZDjczoLe7MR3/t/zeZhF+aEOWFOmBPmhDlhLuXu09e3T6zT6fFB1jlBmBPmhDlhTpgT5oS5tGjA3cNz2Ou6Dnu73SbHYDAI+2g0CvvZyWHYhTlhTpgT5oQ5YU6YS4sGjMfjrH1+Mpks/1ZLrL/IRlWGXZgT5oQ5YU6YE+a07hdYtz//vDh98rNvIgAAAABJRU5ErkJggg==" alt="">Referral Calculator</div>
+
+  <form class="block-body" id="calc" novalidate>
+    <div class="row">
+      <label for="current">Current uses</label>
+      <input type="number" id="current" min="0" max="10000000" value="0">
+    </div>
+
+    <div class="row">
+      <label for="claimed">Claimed uses</label>
+      <input type="number" id="claimed" min="0" max="10000000" step="5" value="0">
+    </div>
+
+    <div class="actions">
+      <button>Calculate</button>
+    </div>
+
+    <div id="out" class="out hidden" role="status"></div>
+  </form>
+</div>
+
+<script>
+var TIERS = [
+  { min: 5,   max: 35,       keys: 1 },
+  { min: 40,  max: 70,       keys: 2 },
+  { min: 75,  max: 105,      keys: 3 },
+  { min: 110, max: 140,      keys: 4 },
+  { min: 145, max: Infinity, keys: 5 }
+];
+
+var CALCULATOR_MAX_USES = 10000000;
+
+function calculate(claimed, current) {
+  var from = claimed / 5 + 1;
+  var to = Math.floor(current / 5);
+  var maxKeys = 0;
+
+  TIERS.forEach(function (tier) {
+    var lo = Math.max(from, tier.min / 5);
+    var hi = Math.min(to, tier.max / 5);
+    if (hi >= lo) maxKeys += (hi - lo + 1) * tier.keys;
+  });
+
+  return {
+    count: Math.max(0, to - from + 1),
+    maxKeys: maxKeys,
+    next: to * 5 + 5
+  };
+}
+
+function parseCount(raw) {
+  raw = raw.trim();
+  if (raw === '') return 0;
+
+  var n = Math.abs(Number(raw));
+  return Number.isInteger(n) ? n : null;
+}
+
+function keyLabel(keys) {
+  return keys + (keys === 1 ? ' key' : ' keys');
+}
+
+var claimedEl = document.getElementById('claimed');
+var currentEl = document.getElementById('current');
+var outEl = document.getElementById('out');
+
+function show(kind, html) {
+  var cls = 'out ' + kind;
+  if (outEl.className === cls && outEl.innerHTML === html) return;
+
+  outEl.className = cls;
+  outEl.innerHTML = html;
+
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  outEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 130, easing: 'ease-out' });
+}
+
+document.getElementById('calc').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  var current = parseCount(currentEl.value);
+  var claimed = parseCount(claimedEl.value);
+
+  if (current === null || claimed === null) return show('err', 'Uses must be a whole number');
+  if (current > CALCULATOR_MAX_USES || claimed > CALCULATOR_MAX_USES) return show('err', 'Calculator uses are limited to ' + CALCULATOR_MAX_USES);
+  if (claimed % 5 !== 0) return show('err', 'Claimed uses must be a multiple of 5');
+  if (current < claimed) return show('err', 'Current uses cannot be lower than claimed uses');
+
+  currentEl.value = current;
+  claimedEl.value = claimed;
+
+  var result = calculate(claimed, current);
+
+  if (result.count === 0) return show('idle', 'Next milestone at ' + result.next + ' uses');
+
+  show('ok', 'You are eligible for <b>' + result.count + ' Plus</b> or <b>' +
+    keyLabel(result.maxKeys) + '</b>');
+});
+</script>
+</body>
+</html>
